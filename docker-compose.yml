@@ -1,0 +1,32 @@
+services:
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    restart: always
+    mem_limit: 768m
+    environment:
+      TZ: Europe/Belgrade
+      LOG_LEVEL: info
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  bot:
+    build: .
+    restart: always
+    mem_limit: 192m
+    depends_on:
+      - flaresolverr
+    env_file:
+      - .env
+    environment:
+      TZ: Europe/Belgrade
+      FLARESOLVERR_URL: http://flaresolverr:8191/v1
+    volumes:
+      - ./data:/app/data
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
